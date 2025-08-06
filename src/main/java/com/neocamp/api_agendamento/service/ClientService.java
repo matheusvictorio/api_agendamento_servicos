@@ -1,14 +1,17 @@
 package com.neocamp.api_agendamento.service;
 
 import com.neocamp.api_agendamento.domain.dto.request.ClientRequestDTO;
+import com.neocamp.api_agendamento.domain.dto.request.ClientUpdateDTO;
 import com.neocamp.api_agendamento.domain.dto.response.ClientResponseDTO;
 import com.neocamp.api_agendamento.domain.entities.Address;
 import com.neocamp.api_agendamento.domain.entities.Client;
 import com.neocamp.api_agendamento.repository.ClientRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ClientService {
@@ -42,5 +45,21 @@ public class ClientService {
                 client.getPhone(),
                 client.getActive()
         );
+    }
+
+    public ClientResponseDTO updateClient(Long id, @Valid ClientUpdateDTO clientUpdateDTO) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado!"));
+
+        if (clientUpdateDTO.name() != null) client.setName(clientUpdateDTO.name());
+        if (clientUpdateDTO.phone() != null) client.setPhone(clientUpdateDTO.phone());
+
+        if (clientUpdateDTO.cep() != null && clientUpdateDTO.number() != null) {
+            Address address = viaCepService.getAddressByCep(clientUpdateDTO.cep(), clientUpdateDTO.number(), clientUpdateDTO.complement());
+            client.setAddress(address);
+        }
+
+        Client updated = clientRepository.save(client);
+        return toResponseDTO(updated);
     }
 }
