@@ -8,6 +8,8 @@ import com.neocamp.api_agendamento.domain.entities.Client;
 import com.neocamp.api_agendamento.repository.ClientRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,5 +63,15 @@ public class ClientService {
 
         Client updated = clientRepository.save(client);
         return toResponseDTO(updated);
+    }
+
+    public Page<ClientResponseDTO> findAllClients(Pageable pageable) {
+        return clientRepository.findAll(pageable).map(this::toResponseDTO);
+    }
+
+    public ClientResponseDTO findClientById(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado!"));
+        return toResponseDTO(client);
     }
 }
