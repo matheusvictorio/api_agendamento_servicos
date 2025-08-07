@@ -48,4 +48,16 @@ public class ClientController {
         ClientResponseDTO client = clientService.findClientById(id);
         return ResponseEntity.ok().body(client);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+        clientService.deleteClient(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<ClientResponseDTO> activateClient(@PathVariable Long id) {
+        ClientResponseDTO clientResponseDTO = clientService.activateClient(id);
+        return ResponseEntity.ok().body(clientResponseDTO);
+    }
 }

@@ -74,4 +74,19 @@ public class ClientService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado!"));
         return toResponseDTO(client);
     }
+
+    public void deleteClient(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado!"));
+        client.setActive(false);
+        clientRepository.save(client);
+    }
+
+    public ClientResponseDTO activateClient(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado!"));
+        client.setActive(true);
+        Client updated = clientRepository.save(client);
+        return toResponseDTO(updated);
+    }
 }
