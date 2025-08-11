@@ -19,4 +19,16 @@ public class Address {
     private String cidade;
     private String uf;
     private String cep;
+
+    @Override
+    public String toString() {
+        return String.format("%s, %s - %s, %s - CEP: %s",
+                this.logradouro,
+                this.numero,
+                this.bairro,
+                this.cidade,
+                this.cep
+        );
+    }
+
 }
