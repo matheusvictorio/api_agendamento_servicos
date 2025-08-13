@@ -4,10 +4,14 @@ import com.neocamp.api_agendamento.domain.dto.request.ScheduleRequestDTO;
 import com.neocamp.api_agendamento.domain.dto.response.ScheduleResponseDTO;
 import com.neocamp.api_agendamento.domain.entities.Schedule;
 import com.neocamp.api_agendamento.domain.enums.Status;
+import com.neocamp.api_agendamento.events.ScheduleCancelEvent;
+import com.neocamp.api_agendamento.events.ScheduleConfirmEvent;
+import com.neocamp.api_agendamento.events.ScheduleCreateEvent;
 import com.neocamp.api_agendamento.repository.ClientRepository;
 import com.neocamp.api_agendamento.repository.ProviderRepository;
 import com.neocamp.api_agendamento.repository.ScheduleRepository;
 import com.neocamp.api_agendamento.repository.WorkRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,17 +21,19 @@ public class ScheduleService {
     private final ProviderRepository providerRepository;
     private final ScheduleRepository scheduleRepository;
     private final EmailService emailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private final ViaCepService viaCepService;
     public ScheduleService(ViaCepService viaCepService, ScheduleRepository scheduleRepository, ProviderRepository providerRepository,
                            ClientRepository clientRepository, WorkRepository workRepository,
-                           EmailService emailService) {
+                           EmailService emailService, ApplicationEventPublisher applicationEventPublisher) {
         this.viaCepService = viaCepService;
         this.scheduleRepository = scheduleRepository;
         this.providerRepository = providerRepository;
         this.clientRepository = clientRepository;
         this.workRepository = workRepository;
         this.emailService = emailService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public ScheduleResponseDTO saveSchedule(ScheduleRequestDTO scheduleRequestDTO) {
@@ -45,7 +51,7 @@ public class ScheduleService {
 
         schedule.setStatus(Status.AGUARDANDO_CONFIRMACAO);
         var savedSchedule = scheduleRepository.save(schedule);
-        emailService.sendScheduleNotification(savedSchedule);
+        applicationEventPublisher.publishEvent(new ScheduleCreateEvent(savedSchedule));
 
         return new ScheduleResponseDTO(
                 savedSchedule.getId(),
@@ -74,7 +80,7 @@ public class ScheduleService {
 
         schedule.setStatus(Status.CONFIRMADO);
         scheduleRepository.save(schedule);
-        emailService.sendConfirmationToClient(schedule);
+        applicationEventPublisher.publishEvent(new ScheduleConfirmEvent(schedule));
 
         return "Agendamento confirmado com sucesso!";
     }
@@ -89,7 +95,7 @@ public class ScheduleService {
 
         schedule.setStatus(Status.CANCELADO);
         scheduleRepository.save(schedule);
-        emailService.sendCancellationToClient(schedule);
+        applicationEventPublisher.publishEvent(new ScheduleCancelEvent(schedule));
 
         return "Agendamento cancelado com sucesso!";
     }

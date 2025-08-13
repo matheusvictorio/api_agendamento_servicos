@@ -3,6 +3,7 @@ package com.neocamp.api_agendamento.controller;
 import com.neocamp.api_agendamento.domain.dto.request.ScheduleRequestDTO;
 import com.neocamp.api_agendamento.domain.dto.response.ScheduleResponseDTO;
 import com.neocamp.api_agendamento.service.ScheduleService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<ScheduleResponseDTO> saveSchedule(@RequestBody ScheduleRequestDTO scheduleRequestDTO){
         ScheduleResponseDTO scheduleResponseDTO = scheduleService.saveSchedule(scheduleRequestDTO);
-        return ResponseEntity.ok().body(scheduleResponseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleResponseDTO);
     }
 
     @GetMapping("/{id}/confirm")
