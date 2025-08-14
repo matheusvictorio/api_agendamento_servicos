@@ -25,6 +25,10 @@ public class Provider implements User{
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     private Boolean active = true;
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
+    @Column(name = "rating_count")
+    private Integer ratingCount = 0;
 
     public Provider(String name, String email, String password, String phone, Address address, Specialty specialty) {
         this.name = name;

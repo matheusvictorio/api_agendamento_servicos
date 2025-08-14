@@ -25,4 +25,9 @@ public class Work {
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
+    private boolean active = true;
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
+    @Column(name = "rating_count")
+    private Integer ratingCount = 0;
 }

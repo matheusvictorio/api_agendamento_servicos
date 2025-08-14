@@ -32,4 +32,22 @@ public class ScheduleController {
         String cancellationMessage = scheduleService.cancelSchedule(id);
         return ResponseEntity.ok().body(cancellationMessage);
     }
+
+    @GetMapping("/rate")
+    public ResponseEntity<Void> submitRating(
+            @RequestParam Long scheduleId,
+            @RequestParam String type,
+            @RequestParam Double rating
+    ) {
+        scheduleService.submitRating(scheduleId, type, rating);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/finalize")
+    public ResponseEntity<String> finalizeSchedule(@PathVariable Long id) {
+        String message = scheduleService.finalizeSchedule(id);
+        return ResponseEntity.ok(message);
+    }
 }
+
+
