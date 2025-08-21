@@ -13,4 +13,5 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
   Optional<Provider> findByIdAndActiveTrue(Long id);
 
   Optional<Provider> findByEmailAndActiveTrue(String email);
+  Optional<Provider> findByEmail(String email);
 }

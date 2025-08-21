@@ -9,7 +9,5 @@ public class ScheduleCancelEvent {
         this.schedule = schedule;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
-    }
+    public Schedule getSchedule() {return schedule;}
 }

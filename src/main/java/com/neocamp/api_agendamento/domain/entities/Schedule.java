@@ -38,5 +38,6 @@ public class Schedule {
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+    private Boolean userRated = false;
+    private LocalDateTime confirmedAt;
 }
-

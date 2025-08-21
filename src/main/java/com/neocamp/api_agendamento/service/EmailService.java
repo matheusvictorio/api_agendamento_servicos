@@ -166,7 +166,6 @@ public class EmailService {
     private String buildHtml(Schedule schedule) {
         String formattedData = schedule.getDateTime()
                 .format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy 'às' HH:mm", new Locale("pt", "BR")));
-
         return """
                 <html>
                 <head>
@@ -215,8 +214,11 @@ public class EmailService {
                 schedule.getAddress().toString(),
                 formattedData,
                 schedule.getWork().getName(),
-                BASE_URL, schedule.getId(),
-                BASE_URL, schedule.getId()
+                BASE_URL,
+                schedule.getId(),
+                BASE_URL,
+                schedule.getId()
+
         );
     }
 
@@ -232,4 +234,68 @@ public class EmailService {
         return sb.toString();
     }
 
+    public void sendRescheduleNotificationToProvider(Schedule schedule) {
+        String formattedData = schedule.getDateTime()
+                .format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy 'às' HH:mm", new Locale("pt", "BR")));
+        String html = String.format("""
+        <html>
+        <body>
+            <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; border-radius: 10px; max-width: 600px; margin: auto;">
+                <h2>Olá, %s!</h2>
+                <p>O agendamento do serviço foi <b>reagendado</b>.</p>
+                <p><b>Cliente:</b> %s</p>
+                <p><b>Endereço:</b> %s</p>
+                <p><b>Nova data e hora:</b> %s</p>
+                <p><b>Serviço:</b> %s</p>
+                <p>Por favor, confirme ou recuse o novo horário:</p>
+                <a style="display:inline-block;padding:10px 20px;margin:10px;font-size:16px;color:#fff;background-color:#007BFF;border:none;border-radius:5px;text-decoration:none;" href="%s/schedules/%d/confirm">Confirmar</a>
+                <a style="display:inline-block;padding:10px 20px;margin:10px;font-size:16px;color:#fff;background-color:#dc3545;border:none;border-radius:5px;text-decoration:none;" href="%s/schedules/%d/cancel">Recusar</a>
+            </div>
+        </body>
+        </html>
+        """,
+                schedule.getProvider().getName(),
+                schedule.getClient().getName(),
+                schedule.getAddress().toString(),
+                formattedData,
+                schedule.getWork().getName(),
+                BASE_URL,
+                schedule.getId(),
+                BASE_URL,
+                schedule.getId()
+        );
+        sendHtml(schedule.getProvider().getEmail(), "Agendamento reagendado para você!", html);
+    }
+    public void sendRescheduleNotificationToClient(Schedule schedule) {
+        String formattedData = schedule.getDateTime()
+                .format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy 'às' HH:mm", new Locale("pt", "BR")));
+        String html = String.format("""
+    <html>
+    <body>
+        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; border-radius: 10px; max-width: 600px; margin: auto;">
+            <h2>Olá, %s!</h2>
+            <p>Seu agendamento foi <b>reagendado</b> pelo prestador.</p>
+            <p><b>Prestador:</b> %s</p>
+            <p><b>Endereço:</b> %s</p>
+            <p><b>Nova data e hora:</b> %s</p>
+            <p><b>Serviço:</b> %s</p>
+            <p>Por favor, confirme ou recuse o novo horário:</p>
+            <a style="display:inline-block;padding:10px 20px;margin:10px;font-size:16px;color:#fff;background-color:#007BFF;border:none;border-radius:5px;text-decoration:none;" href="%s/schedules/%d/confirm">Confirmar</a>
+            <a style="display:inline-block;padding:10px 20px;margin:10px;font-size:16px;color:#fff;background-color:#dc3545;border:none;border-radius:5px;text-decoration:none;" href="%s/schedules/%d/cancel">Recusar</a>
+        </div>
+    </body>
+    </html>
+    """,
+                schedule.getClient().getName(),
+                schedule.getProvider().getName(),
+                schedule.getAddress().toString(),
+                formattedData,
+                schedule.getWork().getName(),
+                BASE_URL,
+                schedule.getId(),
+                BASE_URL,
+                schedule.getId()
+        );
+        sendHtml(schedule.getClient().getEmail(), "Seu agendamento foi reagendado!", html);
+    }
 }

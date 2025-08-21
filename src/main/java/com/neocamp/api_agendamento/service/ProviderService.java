@@ -62,12 +62,20 @@ public class ProviderService {
         if (providerUpdateDTO.name() != null) provider.setName(providerUpdateDTO.name());
         if (providerUpdateDTO.phone() != null) provider.setPhone(providerUpdateDTO.phone());
         if (providerUpdateDTO.specialty() != null) provider.setSpecialty(providerUpdateDTO.specialty());
+
         if (providerUpdateDTO.cep() != null) {
             if (providerUpdateDTO.number() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Para atualizar o CEP, o número do endereço também deve ser informado.");
             }
             Address address = viaCepService.getAddressByCep(providerUpdateDTO.cep(), providerUpdateDTO.number(), providerUpdateDTO.complement());
             provider.setAddress(address);
+        } else if (providerUpdateDTO.number() != null) {
+            Address currentAddress = provider.getAddress();
+            currentAddress.setNumero(providerUpdateDTO.number());
+            if (providerUpdateDTO.complement() != null) {
+                currentAddress.setComplemento(providerUpdateDTO.complement());
+            }
+            provider.setAddress(currentAddress);
         }
 
         Provider savedProvider = providerRepository.save(provider);

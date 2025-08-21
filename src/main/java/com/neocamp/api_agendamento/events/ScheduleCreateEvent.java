@@ -9,7 +9,5 @@ public class ScheduleCreateEvent {
         this.schedule = schedule;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
-    }
+    public Schedule getSchedule() {return schedule;}
 }

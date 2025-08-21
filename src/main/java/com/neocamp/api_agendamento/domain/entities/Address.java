@@ -4,10 +4,12 @@ import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 @Embeddable
 @Getter
+@Setter
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
